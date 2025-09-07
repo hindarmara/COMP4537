@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Lab 0 - Memory Game</title>
+  </head>
+  <body>
+    <main class="container">
+      <h1>Memory Game</h1>
+      <label for="numOfButtons" id="countLabel"></label>
+
+      <input type="number" id="numOfButtons" min="3" max="7" placeholder="choose between 3 to 7" />
+
+      <button id="goButton">Go!</button>
+
+      <section id="statusMessage" aria-live="polite" class="statusMessage"></section>
+
+      <div id="buttonContainer" class="buttonContainer"></div>
+    </main>
+
+    <script src="lang/messages/en/user.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

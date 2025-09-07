@@ -1,0 +1,88 @@
+/* Layout */
+.container {
+  max-width: 100vw;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+
+/* Controls (label, input, button) */
+#countLabel {
+  display: inline-block;
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+#numOfButtons {
+  width: 12rem;
+  padding: 0.55rem 0.7rem;
+}
+
+#goButton {
+  margin-left: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+#goButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status message */
+.statusMessage {
+  min-height: 1.5rem;
+  margin: 0.5rem 0 0.75rem 0;
+}
+
+/* Board / button container */
+#buttonContainer,
+.buttonContainer {
+  position: relative;
+  width: 99vw;
+  height: 80vh;
+  overflow: hidden;
+  margin: 0 auto;
+  background: #e2e8f0;
+}
+
+/* Memory buttons */
+.memory-button {
+  position: absolute;
+  height: 5em;
+  width: 10em;
+  border: solid 2px #626262;
+  cursor: default;
+  font-weight: 700;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, left 0.3s ease, top 0.3s ease, opacity 0.3s ease,
+    outline-color 0.2s ease;
+  user-select: none;
+}
+
+button.memory-button {
+  height: 5em;
+  width: 10em;
+}
+
+.memory-button.hidden-number {
+  color: transparent;
+  text-shadow: none;
+}
+
+.memory-button.revealed {
+  color: #0b1224;
+}
+
+.memory-button.correct {
+  outline: 3px solid #22c55e;
+  outline-offset: 0;
+}
+
+.memory-button.wrong {
+  outline: 3px solid #ef4444;
+  outline-offset: 0;
+}
