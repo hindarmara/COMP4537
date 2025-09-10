@@ -170,7 +170,7 @@ class GameManager {
   createAndPlaceButtons(buttonCount) {
     const btns = [];
     for (let i = 1; i <= buttonCount; i++) {
-      const btn = new MemoryButton(i, i);
+      const btn = new MemoryButton(i);
       btns.push(btn);
     }
     btns.forEach((btnEl) => btnEl.placeButton(this.buttonContainer));
