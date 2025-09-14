@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lab 1 – Writer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md bg-body-tertiary border-bottom mb-3">
+      <div class="container">
+        <a class="navbar-brand" href="./index.html">Lab 1</a>
+        <div class="ms-auto small text-body-secondary"><span id="saveStatus"></span></div>
+      </div>
+    </nav>
+
+    <main class="container">
+      <h1 class="h3 mb-3" id="pageTitle"></h1>
+      <div class="d-flex gap-2 mb-3">
+        <button id="addNoteBtn" class="btn btn-primary"></button>
+      </div>
+
+      <div id="notesContainer" class="row row-cols-1 row-cols-md-2 g-3"></div>
+      <div class="mt-3">
+        <a class="btn btn-link" href="./index.html" id="backHome"></a>
+      </div>
+    </main>
+
+    <footer class="border-top mt-5 py-3">
+      <div class="container text-center text-body-secondary">© <span id="year"></span> Lab 1</div>
+    </footer>
+
+    <script src="./lang/messages/en/user.js"></script>
+    <script src="./js/classes.js"></script>
+    <script src="./js/noteAppUI.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
