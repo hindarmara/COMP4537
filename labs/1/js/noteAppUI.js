@@ -47,10 +47,10 @@ class NotesAppUI {
     body.prepend(h5); // ensure title is first
 
     if (this.mode === WRITER_MODE) {
-      const ta = document.createElement("textarea");
-      ta.className = "form-control mb-2";
-      ta.setAttribute("data-idx", String(index));
-      ta.value = note.body ?? "";
+      const textAreaElement = document.createElement("textarea");
+      textAreaElement.className = "form-control mb-2";
+      textAreaElement.setAttribute("data-idx", String(index));
+      textAreaElement.value = note.body ?? "";
 
       const btn = document.createElement("button");
       btn.type = "button";
@@ -58,7 +58,7 @@ class NotesAppUI {
       btn.setAttribute("data-remove", note.id);
       btn.textContent = window.MESSAGES.REMOVE_NOTE;
 
-      body.append(ta, btn);
+      body.append(textAreaElement, btn);
     } else {
       const p = document.createElement("p");
       p.className = "card-text";
