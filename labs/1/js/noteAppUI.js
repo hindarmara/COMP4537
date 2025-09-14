@@ -1,3 +1,5 @@
+// Part of this code is written with AI assistance
+
 const TWO_SECONDS = 2000;
 const READER_TITLE = "Lab 1 – Reader";
 const WRITER_TITLE = "Lab 1 – Writer";
@@ -10,7 +12,7 @@ class NotesAppUI {
     this.noteApp = noteApp;
     this.notesContainer = document.getElementById("notesContainer");
     this.saveStatus = document.getElementById("saveStatus");
-    this.mode = mode; // "writer" or "reader"
+    this.mode = mode;
 
     // 1) Load BEFORE wiring events or saving
     this.loadNotes();
@@ -168,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("appTitle")) {
     const $ = (s) => document.querySelector(s);
     $("#appTitle").textContent = window.MESSAGES.APP_TITLE;
-    // $("#studentHint").textContent = window.MESSAGES.INDEX_HINT;
     $("#openWriter").textContent = window.MESSAGES.OPEN_WRITER;
     $("#openReader").textContent = window.MESSAGES.OPEN_READER;
   }
@@ -188,8 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("addNoteBtn").textContent = window.MESSAGES.ADD_NOTE;
     document.getElementById("backHome").textContent = window.MESSAGES.BACK_HOME;
     new NotesAppUI(app, WRITER_MODE);
-    // ui.renderWriter();
-    // ui.saveNotes();
   } else if (pageTitle === READER_TITLE) {
     document.getElementById("pageTitle").textContent = window.MESSAGES.READER_TITLE;
     document.getElementById("backHome").textContent = window.MESSAGES.BACK_HOME;

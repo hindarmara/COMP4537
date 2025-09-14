@@ -1,7 +1,6 @@
 (function () {
   const M = {
     APP_TITLE: "Lab 1: JSON, Object Constructor, localStorage – Andre Hindarmara",
-    INDEX_HINT: "This is the landing page. Use the buttons below to open the writer and reader.",
     OPEN_WRITER: "Open Writer",
     OPEN_READER: "Open Reader",
 
