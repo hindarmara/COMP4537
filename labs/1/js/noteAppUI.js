@@ -19,7 +19,7 @@ class NotesAppUI {
 
     // 2) Wire events after elements exist
     if (mode === WRITER_MODE) {
-      this.initEvents();
+      this.initializeEventListeners();
       this.renderWriter();
       this.saveNotes();
       this.lastSavedData = JSON.stringify(this.noteApp.getNotes());
@@ -39,12 +39,6 @@ class NotesAppUI {
 
     const body = document.createElement("div");
     body.className = "card-body";
-
-    const h5 = document.createElement("h5");
-    h5.className = "card-title";
-    h5.textContent = "Note";
-
-    body.prepend(h5); // ensure title is first
 
     if (this.mode === WRITER_MODE) {
       const textAreaElement = document.createElement("textarea");
@@ -134,7 +128,7 @@ class NotesAppUI {
     }
   }
 
-  initEvents() {
+  initializeEventListeners() {
     const addBtn = document.getElementById("addNoteBtn");
     if (addBtn) {
       addBtn.addEventListener("click", () => {
