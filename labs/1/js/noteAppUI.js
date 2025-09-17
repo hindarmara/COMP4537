@@ -1,9 +1,11 @@
 // Part of this code is written with AI assistance
 
+// const { element } = require("prop-types");
+
 const TWO_SECONDS = 2000;
 const READER_TITLE = "Lab 1 – Reader";
 const WRITER_TITLE = "Lab 1 – Writer";
-const STORAGE_KEY = "notes"; // keep this in sync with writer
+const STORAGE_KEY = "notes";
 const WRITER_MODE = "writer";
 const READER_MODE = "reader";
 
@@ -49,7 +51,7 @@ class NotesAppUI {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn btn-danger btn-sm mt-2";
-      btn.setAttribute("data-remove", note.id);
+      btn.setAttribute("data-remove-idx", String(index));
       btn.textContent = window.MESSAGES.REMOVE_NOTE;
 
       body.append(textAreaElement, btn);
@@ -103,7 +105,7 @@ class NotesAppUI {
 
   saveNotes() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.noteApp.getNotes()));
-    this.lastSaved = Utility.time();
+    this.lastSaved = new Date().toLocaleString();
     this.saveStatus.textContent = `${window.MESSAGES.LAST_SAVED_AT} ${this.lastSaved}`;
   }
 
@@ -117,11 +119,12 @@ class NotesAppUI {
 
   loadNotes() {
     const storedNotes = localStorage.getItem(STORAGE_KEY);
+    console.log("Loaded from storage:", storedNotes);
     if (storedNotes) {
       try {
-        const arr = JSON.parse(storedNotes);
+        const notesArray = JSON.parse(storedNotes);
         // Rehydrate Notes: keep Note methods by assigning saved fields onto a new Note
-        this.noteApp.notes = arr.map((n) => Object.assign(new Note(n.body), n));
+        this.noteApp.notes = notesArray.map((n) => Object.assign(new Note(n.body), n));
       } catch {
         this.noteApp.notes = [];
       }
@@ -141,9 +144,9 @@ class NotesAppUI {
 
     // Only attach if container has textareas/buttons (writer mode)
     this.notesContainer.addEventListener("click", (e) => {
-      if (e.target.matches("button[data-remove]")) {
-        const id = e.target.getAttribute("data-remove");
-        this.noteApp.removeNote(id);
+      if (e.target.matches("button[data-remove-idx]")) {
+        const idx = Number(e.target.getAttribute("data-remove-idx"));
+        this.noteApp.notes.splice(idx, 1); // Remove by index
         this.renderWriter();
         this.saveNotes();
       }
@@ -177,15 +180,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const pageTitle = document.title;
   const app = new NoteApp();
+  const elementId = (elementId) => document.getElementById(elementId);
 
   if (pageTitle === WRITER_TITLE) {
-    document.getElementById("pageTitle").textContent = window.MESSAGES.WRITER_TITLE;
-    document.getElementById("addNoteBtn").textContent = window.MESSAGES.ADD_NOTE;
-    document.getElementById("backHome").textContent = window.MESSAGES.BACK_HOME;
+    elementId("pageTitle").textContent = window.MESSAGES.WRITER_TITLE;
+    elementId("addNoteBtn").textContent = window.MESSAGES.ADD_NOTE;
+    elementId("backHome").textContent = window.MESSAGES.BACK_HOME;
     new NotesAppUI(app, WRITER_MODE);
   } else if (pageTitle === READER_TITLE) {
-    document.getElementById("pageTitle").textContent = window.MESSAGES.READER_TITLE;
-    document.getElementById("backHome").textContent = window.MESSAGES.BACK_HOME;
+    elementId("pageTitle").textContent = window.MESSAGES.READER_TITLE;
+    elementId("backHome").textContent = window.MESSAGES.BACK_HOME;
     new NotesAppUI(app, READER_MODE);
   }
 });
