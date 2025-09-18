@@ -1,8 +1,6 @@
 // Part of this code is written with AI assistance
 
-// const { element } = require("prop-types");
-
-const TWO_SECONDS = 2000;
+const DELAY_IN_MS = 2000;
 const READER_TITLE = "Lab 1 – Reader";
 const WRITER_TITLE = "Lab 1 – Writer";
 const STORAGE_KEY = "notes";
@@ -10,28 +8,51 @@ const WRITER_MODE = "writer";
 const READER_MODE = "reader";
 
 class NotesAppUI {
-  constructor(noteApp, mode = WRITER_MODE) {
+  /**
+   * Creates an instance of the UI for the note application.
+   * Initializes the UI based on the provided mode (WRITER_MODE or READER_MODE).
+   * Loads notes, sets up event listeners, and manages auto-save or auto-refresh functionality.
+   *
+   * @param {NoteApp} noteApp - The note application instance containing notes and related methods.
+   * @param {string} mode - The mode of the UI, either WRITER_MODE or READER_MODE.
+   */
+  constructor(noteApp, mode) {
     this.noteApp = noteApp;
     this.notesContainer = document.getElementById("notesContainer");
     this.saveStatus = document.getElementById("saveStatus");
     this.mode = mode;
 
-    // 1) Load BEFORE wiring events or saving
     this.loadNotes();
 
-    // 2) Wire events after elements exist
-    if (mode === WRITER_MODE) {
-      this.initializeEventListeners();
-      this.renderWriter();
-      this.saveNotes();
-      this.lastSavedData = JSON.stringify(this.noteApp.getNotes());
-      setInterval(() => this.autoSave(), TWO_SECONDS);
-    } else if (mode === READER_MODE) {
-      this.renderReader();
-      setInterval(() => this.renderReader(), TWO_SECONDS);
+    switch (mode) {
+      case WRITER_MODE:
+        this.renderWriter();
+        this.initializeEventListeners();
+        this.saveNotes();
+        this.lastSavedData = JSON.stringify(this.noteApp.getNotes());
+        setInterval(() => this.autoSave(), DELAY_IN_MS);
+        break;
+
+      case READER_MODE:
+        this.renderReader();
+        setInterval(() => this.renderReader(), DELAY_IN_MS);
+        break;
+
+      default:
+        console.log(`Unknown mode: ${mode}`);
     }
   }
 
+  /**
+   * Builds a DOM element representing a note card.
+   * Creates different UI elements based on the current mode (writer/reader).
+   * In writer mode, includes a textarea and remove button.
+   * In reader mode, displays note content as read-only text.
+   *
+   * @param {Note} note - The note object containing the note data.
+   * @param {number} index - The index of the note in the notes array.
+   * @returns {HTMLElement} A div element containing the complete note card.
+   */
   buildNoteCard(note, index) {
     const col = document.createElement("div");
     col.className = "col";
@@ -43,10 +64,10 @@ class NotesAppUI {
     body.className = "card-body";
 
     if (this.mode === WRITER_MODE) {
-      const textAreaElement = document.createElement("textarea");
-      textAreaElement.className = "form-control mb-2";
-      textAreaElement.setAttribute("data-idx", String(index));
-      textAreaElement.value = note.body ?? "";
+      const textArea = document.createElement("textarea");
+      textArea.className = "form-control mb-2";
+      textArea.setAttribute("data-idx", String(index));
+      textArea.value = note.body ?? "";
 
       const btn = document.createElement("button");
       btn.type = "button";
@@ -54,11 +75,11 @@ class NotesAppUI {
       btn.setAttribute("data-remove-idx", String(index));
       btn.textContent = window.MESSAGES.REMOVE_NOTE;
 
-      body.append(textAreaElement, btn);
+      body.append(textArea, btn);
     } else {
       const p = document.createElement("p");
       p.className = "card-text";
-      p.textContent = note.body ?? ""; // avoid HTML injection
+      p.textContent = note.body ?? "";
       body.appendChild(p);
     }
 
@@ -67,11 +88,17 @@ class NotesAppUI {
     return col;
   }
 
+  /**
+   * Renders the common UI elements for both writer and reader modes.
+   * Clears the notes container and either displays an empty state message
+   * or creates note cards for all existing notes using a document fragment for performance.
+   */
   renderCommon() {
     const c = this.notesContainer;
     c.innerHTML = "";
 
     const notes = this.noteApp.getNotes();
+
     if (!notes.length) {
       const empty = document.createElement("div");
       empty.className = "text-center text-muted";
@@ -80,20 +107,29 @@ class NotesAppUI {
       return;
     }
 
-    const frag = document.createDocumentFragment();
+    const documentFragment = document.createDocumentFragment();
     notes.forEach((note, index) => {
       const card = this.buildNoteCard(note, index);
-      frag.appendChild(card);
+      documentFragment.appendChild(card);
     });
-    c.appendChild(frag);
+    c.appendChild(documentFragment);
   }
 
+  /**
+   * Renders the UI for writer mode.
+   * Calls renderCommon to display all notes with editable textareas and remove buttons.
+   */
   renderWriter() {
     this.renderCommon();
   }
 
+  /**
+   * Renders the UI for reader mode.
+   * Reloads notes from storage, updates the status display with retrieval time,
+   * and calls renderCommon to display read-only note cards.
+   */
   renderReader() {
-    this.loadNotes(); // reload to get latest from storage
+    this.loadNotes();
 
     if (this.saveStatus) {
       this.saveStatus.textContent = `${
@@ -103,12 +139,21 @@ class NotesAppUI {
     this.renderCommon();
   }
 
+  /**
+   * Saves the current notes to localStorage and updates the save status display.
+   * Stores the notes array as JSON and shows the last saved timestamp to the user.
+   */
   saveNotes() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.noteApp.getNotes()));
     this.lastSaved = new Date().toLocaleString();
     this.saveStatus.textContent = `${window.MESSAGES.LAST_SAVED_AT} ${this.lastSaved}`;
   }
 
+  /**
+   * Automatically saves notes if there have been changes since the last save.
+   * Compares current note data with the last saved state to avoid unnecessary saves.
+   * Called periodically by setInterval in writer mode.
+   */
   autoSave() {
     const currentData = JSON.stringify(this.noteApp.getNotes());
     if (currentData !== this.lastSavedData) {
@@ -117,13 +162,18 @@ class NotesAppUI {
     }
   }
 
+  /**
+   * Loads notes from localStorage and deserializes them into Note objects.
+   * If stored data exists, parses JSON and recreates Note instances.
+   * Falls back to empty array if parsing fails or no data exists.
+   */
   loadNotes() {
     const storedNotes = localStorage.getItem(STORAGE_KEY);
     console.log("Loaded from storage:", storedNotes);
+
     if (storedNotes) {
       try {
         const notesArray = JSON.parse(storedNotes);
-        // Rehydrate Notes: keep Note methods by assigning saved fields onto a new Note
         this.noteApp.notes = notesArray.map((n) => Object.assign(new Note(n.body), n));
       } catch {
         this.noteApp.notes = [];
@@ -131,6 +181,11 @@ class NotesAppUI {
     }
   }
 
+  /**
+   * Sets up event listeners for writer mode functionality.
+   * Handles add note button clicks, note removal, and textarea input changes.
+   * Uses event delegation for dynamic note elements.
+   */
   initializeEventListeners() {
     const addBtn = document.getElementById("addNoteBtn");
     if (addBtn) {
@@ -142,16 +197,17 @@ class NotesAppUI {
       });
     }
 
-    // Only attach if container has textareas/buttons (writer mode)
+    // Event listener for Remove button in writer mode
     this.notesContainer.addEventListener("click", (e) => {
       if (e.target.matches("button[data-remove-idx]")) {
         const idx = Number(e.target.getAttribute("data-remove-idx"));
         this.noteApp.notes.splice(idx, 1); // Remove by index
-        this.renderWriter();
-        this.saveNotes();
+        this.renderWriter(); // Re-render after removal
+        this.saveNotes(); // Update localStorage
       }
     });
 
+    // Event listener for textarea input in writer mode
     this.notesContainer.addEventListener("input", (e) => {
       if (e.target.matches("textarea[data-idx]")) {
         const idx = Number(e.target.getAttribute("data-idx"));
