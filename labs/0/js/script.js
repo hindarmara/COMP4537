@@ -82,12 +82,12 @@ class MemoryButton {
     this.id = order;
     this.order = order;
     this.color = Utility.randomColor();
-    this.element = document.createElement(ELEMENT_TYPE_BUTTON);
-    this.element.type = ELEMENT_TYPE_BUTTON;
-    this.element.className = CLASS_MEMORY_BUTTON;
-    this.element.style.backgroundColor = this.color;
-    this.element.textContent = order;
-    this.element.dataset.order = order;
+    this.buttonElement = document.createElement(ELEMENT_TYPE_BUTTON);
+    this.buttonElement.type = ELEMENT_TYPE_BUTTON;
+    this.buttonElement.className = CLASS_MEMORY_BUTTON;
+    this.buttonElement.style.backgroundColor = this.color;
+    this.buttonElement.textContent = order;
+    this.buttonElement.dataset.order = order;
     this.width = INITIAL_WIDTH;
     this.height = INITIAL_HEIGHT;
   }
@@ -97,8 +97,8 @@ class MemoryButton {
    * @param {HTMLElement} container - Parent DOM element.
    */
   placeButton(container) {
-    container.appendChild(this.element);
-    const rect = this.element.getBoundingClientRect(); // returns the size and position of an element relative to the viewport (browser window).
+    container.appendChild(this.buttonElement);
+    const rect = this.buttonElement.getBoundingClientRect(); // returns the size and position of an element relative to the viewport (browser window).
     this.width = rect.width;
     this.height = rect.height;
   }
@@ -113,39 +113,39 @@ class MemoryButton {
     const maxTop = Math.max(0, btnContainer.height - this.height);
     const left = Utility.randomInt(0, Math.floor(maxLeft));
     const top = Utility.randomInt(0, Math.floor(maxTop));
-    this.element.style.left = `${left}px`;
-    this.element.style.top = `${top}px`;
+    this.buttonElement.style.left = `${left}px`;
+    this.buttonElement.style.top = `${top}px`;
   }
 
   /**
    * Reveals the button's number visually.
    */
   showNumber() {
-    this.element.classList.remove(CLASS_HIDDEN_NUMBER);
-    this.element.classList.add(CLASS_REVEALED);
-    this.element.textContent = this.order;
+    this.buttonElement.classList.remove(CLASS_HIDDEN_NUMBER);
+    this.buttonElement.classList.add(CLASS_REVEALED);
+    this.buttonElement.textContent = this.order;
   }
 
   /**
    * Hides the button's number visually (for gameplay).
    */
   hideNumber() {
-    this.element.classList.add(CLASS_HIDDEN_NUMBER);
-    this.element.textContent = this.order; // keep accessible label (screen readers) via aria if needed
+    this.buttonElement.classList.add(CLASS_HIDDEN_NUMBER);
+    this.buttonElement.textContent = this.order; // keep accessible label (screen readers) via aria if needed
   }
 
   /**
    * Marks the button as correct (for styling).
    */
   markCorrect() {
-    this.element.classList.add(CLASS_CORRECT);
+    this.buttonElement.classList.add(CLASS_CORRECT);
   }
 
   /**
    * Marks the button as wrong (for styling).
    */
   markWrong() {
-    this.element.classList.add(CLASS_WRONG);
+    this.buttonElement.classList.add(CLASS_WRONG);
   }
 
   /**
@@ -153,8 +153,8 @@ class MemoryButton {
    * @param {boolean} enable - Whether to enable pointer events.
    */
   enablePointer(enable) {
-    this.element.style.pointerEvents = enable ? POINTER_EVENTS_AUTO : POINTER_EVENTS_NONE;
-    this.element.style.cursor = enable ? CURSOR_POINTER : CURSOR_DEFAULT;
+    this.buttonElement.style.pointerEvents = enable ? POINTER_EVENTS_AUTO : POINTER_EVENTS_NONE;
+    this.buttonElement.style.cursor = enable ? CURSOR_POINTER : CURSOR_DEFAULT;
   }
 }
 
@@ -162,41 +162,6 @@ class MemoryButton {
  * Controls the memory game logic and state.
  */
 class GameManager {
-  /**
-   * Creates and places memory buttons on the board.
-   * @param {number} buttonCount - Number of buttons to create.
-   * @returns {MemoryButton[]} Array of created MemoryButton instances.
-   */
-  createAndPlaceButtons(buttonCount) {
-    const btns = [];
-    for (let i = 1; i <= buttonCount; i++) {
-      const btn = new MemoryButton(i);
-      btns.push(btn);
-    }
-    btns.forEach((btnEl) => btnEl.placeButton(this.buttonContainer));
-    return btns;
-  }
-
-  /**
-   * Arranges buttons in rows within the board container.
-   * @param {MemoryButton[]} btns - Array of MemoryButton instances.
-   */
-  layoutButtons(btns) {
-    const boardRectangle = this.buttonContainer.getBoundingClientRect();
-    const btnSpacing = INITIAL_BUTTON_SPACING;
-    let x = btnSpacing;
-    let y = btnSpacing;
-    const rowHeight = btns.length > 0 ? btns[0].height : 0;
-    for (const b of btns) {
-      if (x + b.width > boardRectangle.width - btnSpacing) {
-        x = btnSpacing;
-        y += rowHeight + btnSpacing;
-      }
-      b.element.style.left = `${x}px`;
-      b.element.style.top = `${y}px`;
-      x += b.width + btnSpacing;
-    }
-  }
   /**
    * Initializes the game manager.
    * @param {HTMLElement} buttonContainer - Container for buttons.
@@ -215,16 +180,53 @@ class GameManager {
   }
 
   /**
+   * Creates and places memory buttons on the board.
+   * @param {number} buttonCount - Number of buttons to create.
+   * @returns {MemoryButton[]} Array of created MemoryButton instances.
+   */
+  createAndPlaceButtons(buttonCount) {
+    const btns = [];
+    for (let i = 1; i <= buttonCount; i++) {
+      const btn = new MemoryButton(i);
+      btns.push(btn);
+    }
+    btns.forEach((btn) => btn.placeButton(this.buttonContainer));
+    return btns;
+  }
+
+  /**
+   * Arranges buttons in rows within the board container.
+   * @param {MemoryButton[]} btns - Array of MemoryButton instances.
+   */
+  layoutButtons(btns) {
+    const boardRectangle = this.buttonContainer.getBoundingClientRect(); // returns width and height in pixels
+    const btnSpacing = INITIAL_BUTTON_SPACING;
+    let x = btnSpacing;
+    let y = btnSpacing;
+    const rowHeight = btns.length > 0 ? btns[0].height : 0;
+    for (const b of btns) {
+      if (x + b.width > boardRectangle.width - btnSpacing) {
+        x = btnSpacing;
+        y += rowHeight + btnSpacing;
+      }
+      b.buttonElement.style.left = `${x}px`;
+      b.buttonElement.style.top = `${y}px`;
+
+      x += b.width + btnSpacing;
+    }
+  }
+
+  /**
    * Resets the game state and UI.
    */
   gameReset() {
-    if (this.scrambleTimer) {
-      clearInterval(this.scrambleTimer);
-      this.scrambleTimer = null;
-    }
     if (this.scrambleTimeout) {
       clearTimeout(this.scrambleTimeout);
       this.scrambleTimeout = null;
+    }
+    if (this.scrambleTimer) {
+      clearInterval(this.scrambleTimer);
+      this.scrambleTimer = null;
     }
     this.buttonContainer.innerHTML = "";
     this.buttons.length = 0;
@@ -254,15 +256,16 @@ class GameManager {
     Utility.setMessage(window.MESSAGES.SHOWING_ORDER(showSeconds));
 
     this.scrambleTimeout = setTimeout(() => {
-      let count = 0;
-      const total = buttonCount;
+      let scrambleCount = 0;
+      const scrambleTotal = buttonCount;
+
       this.scrambleTimer = setInterval(() => {
-        count++;
+        scrambleCount++;
         const rect = this.buttonContainer.getBoundingClientRect();
         for (const b of this.buttons) {
           b.setPositionWithin(rect);
         }
-        if (count >= total) {
+        if (scrambleCount >= scrambleTotal) {
           clearInterval(this.scrambleTimer);
           this.scrambleTimer = null;
           if (this.scrambleTimeout) {
@@ -271,7 +274,7 @@ class GameManager {
           }
           this.enablePlay();
         } else {
-          Utility.setMessage(window.MESSAGES.SCRAMBLING(count, total));
+          Utility.setMessage(window.MESSAGES.SCRAMBLING(scrambleCount, scrambleTotal));
         }
       }, 2000);
     }, showSeconds * 1000);
@@ -286,7 +289,7 @@ class GameManager {
     for (const b of this.buttons) {
       b.hideNumber();
       b.enablePointer(true);
-      b.element.onclick = () => this.handleClick(b);
+      b.buttonElement.onclick = () => this.handleClick(b);
     }
     this.expectedIndex = 0;
     Utility.setMessage(window.MESSAGES.CLICK_IN_ORDER);
