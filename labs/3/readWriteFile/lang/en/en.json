@@ -1,6 +1,6 @@
 {
     "noQuery": "No query provided",
-    "invalidRoute": "Invalid route, visit <a href=\"https://example.com/docs/writeFile\">https://example.com/docs/writeFile</a> to write to file.txt </br> or go to <a href=\"https://example.com/docs\">https://example.com/docs</a> to read file.txt",
+    "invalidRoute": "Invalid route, visit <a href=\"https://comp4537-d06c.onrender.com/COMP4537/labs/3/writeFile/?text=yourText\">https://comp4537-d06c.onrender.com/COMP4537/labs/3/writeFile/?text=yourText</a> to write to file.txt </br> or go to <a href=\"https://comp4537-d06c.onrender.com/COMP4537/labs/3/readFile/file.txt\">https://comp4537-d06c.onrender.com/COMP4537/labs/3/readFile/file.txt</a> to read file.txt",
     "fileWritten": "File written successfully",
-    "fileNotFound": "File not found, create file.txt by <a href=\"https://example.com/docs/writeFile\">writing to it first.</a>"
+    "fileNotFound": "File not found, create file.txt by <a href=\"https://comp4537-d06c.onrender.com/COMP4537/labs/3/writeFile/?text=yourText\">writing to it first.</a>"
 }
