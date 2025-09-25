@@ -1,3 +1,4 @@
+// Server.js
 const http = require("http");
 const url = require("url");
 const utils = require("./modules/utils.js");
@@ -6,45 +7,49 @@ const messages = require("./lang/en/en.json");
 const PORT = process.env.PORT || 8000;
 const ROUTE = "/COMP4537/labs/3/getDate/";
 
-// https://yourDomainName.xyz/COMP4537/labs/3/getDate/?name=John
-const server = http.createServer((req, res) => {
-  const reqUrl = url.parse(req.url, true);
+class AppServer {
+  constructor(port, route) {
+    this.port = port;
+    this.route = route;
+  }
 
-  const path = reqUrl.pathname; // "/COMP4537/labs/3/getDate/"
-  console.log(`Path: ${path}`);
-  console.log(`Query: ${JSON.stringify(reqUrl.query)}`);
+  formatMessage(template, ...values) {
+    let result = template;
+    values.forEach((val, i) => {
+      result = result.replace(`%${i + 1}`, val);
+    });
+    return result;
+  }
 
-  if (path !== ROUTE) {
-    const message = messages["404"] + " " + messages["tryRoute"];
-    console.log(`Message: ${message}`);
-    res.writeHead(404, { "Content-Type": "text/html" });
-    res.end(
-      `<html>
-        <body>
-          <p>${message}</p>
-        </body>
-      </html>`
-    );
-    return;
-  } else {
-    const name = reqUrl.query.name || messages['noName'];
-    console.log(`Name: ${name}`);
+  handleRequest(req, res) {
+    const reqUrl = url.parse(req.url, true);
+    const path = reqUrl.pathname;
 
+    if (path !== this.route) {
+      const message = messages["404"] + " " + messages["tryRoute"];
+      res.writeHead(404, { "Content-Type": "text/html" });
+      res.end(`<html><body><p>${message}</p></body></html>`);
+      return;
+    }
+
+    const name = reqUrl.query.name || messages.noName;
     const dateTimeNow = utils.getDateTimeNow();
-    console.log(`Date and time now: ${dateTimeNow}`);
 
-    const message = messages.message.replace("%1", name).replace("%2", dateTimeNow);
-    console.log(`Message: ${message}`);
+    const message = this.formatMessage(messages.message, name, dateTimeNow);
 
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(
-      `<html>
-      <body>
-        <H3>${message}</H3>
-      </body>
-    </html>`
-    );
+    res.end(`<html><body><h3>${message}</h3></body></html>`);
   }
-});
 
-server.listen(PORT);
+  start() {
+    const server = http.createServer(this.handleRequest.bind(this));
+    server.listen(this.port, () => {
+      console.log(`Server running on port ${this.port}`);
+    });
+  }
+}
+
+module.exports = AppServer;
+
+const server = new AppServer(PORT, ROUTE);
+server.start();
