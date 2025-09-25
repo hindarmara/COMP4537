@@ -1,0 +1,4 @@
+{
+    "message": "Hello %1, what a beautiful day. Server current date and time is %2", 
+    "error": "An error occurred: %1"
+}
