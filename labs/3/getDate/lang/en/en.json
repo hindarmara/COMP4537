@@ -1,4 +1,7 @@
 {
     "message": "Hello %1, what a beautiful day. Server current date and time is %2", 
-    "error": "An error occurred: %1"
+    "error": "An error occurred: %1",
+    "404": "404 Page Not Found: The requested resource was not found on this server.",
+    "tryRoute": "Please use the correct endpoint: /COMP4537/labs/3/getDate/?name=YourName",
+    "noName": "Stranger"
 }
