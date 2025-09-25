@@ -49,7 +49,5 @@ class AppServer {
   }
 }
 
-module.exports = AppServer;
-
 const server = new AppServer(PORT, ROUTE);
 server.start();
