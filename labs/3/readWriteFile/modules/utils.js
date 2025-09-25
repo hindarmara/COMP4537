@@ -41,6 +41,14 @@ class Utils {
       `<html><body><h3>${messages.fileNotFound}</h3></body></html>`
     );
   }
+
+  static fileNotFoundWithName(res, fileName) {
+    const message = messages.fileNotFoundWithName
+      .replace("%1", fileName)
+      .replace("%2", messages.fileNotFound);
+
+    Utils.sendResponse(res, 404, "text/html", `<html><body><h3>${message}</h3></body></html>`);
+  }
 }
 
 module.exports = Utils;

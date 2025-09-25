@@ -39,9 +39,13 @@ class AppServer {
 
       if (fileName === this.fileName) {
         console.log(`File path: ${this.filePath}`);
+        if (!Utils.fileExists(this.filePath)) {
+          Utils.fileNotFoundWithName(res, fileName);
+          return;
+        }
         Utils.showFileContent(this.filePath, res);
       } else {
-        Utils.invalidRoute(res);
+        Utils.fileNotFoundWithName(res, fileName);
       }
     } else {
       Utils.invalidRoute(res);
@@ -55,10 +59,6 @@ class AppServer {
         break;
 
       case req.url.startsWith(this.readerRoute):
-        if (!Utils.fileExists(this.filePath)) {
-          Utils.fileNotFound(res);
-          return;
-        }
         this.handleReaderRequest(res, receivedRoute);
         break;
 
