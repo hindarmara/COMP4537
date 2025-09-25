@@ -32,14 +32,17 @@ class AppServer {
   handleReaderRequest(res, receivedRoute) {
     console.log(`Received route: ${receivedRoute}`);
 
-    const routeParts = receivedRoute.split("/");
-    const receivedFileName = routeParts[routeParts.length - 1];
-    console.log(`Requested file: ${receivedFileName}`);
+    // Check if the route starts with the reader route and extract filename
+    if (receivedRoute.startsWith(this.readerRoute)) {
+      const fileName = receivedRoute.substring(this.readerRoute.length);
+      console.log(`Requested file: ${fileName}`);
 
-    if (receivedFileName === this.fileName) {
-      console.log(`File path: ${this.filePath}`);
-
-      Utils.showFileContent(this.filePath, res);
+      if (fileName === this.fileName) {
+        console.log(`File path: ${this.filePath}`);
+        Utils.showFileContent(this.filePath, res);
+      } else {
+        Utils.invalidRoute(res);
+      }
     } else {
       Utils.invalidRoute(res);
     }
