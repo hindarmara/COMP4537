@@ -38,7 +38,7 @@ class AppServer {
     const message = this.formatMessage(messages.message, name, dateTimeNow);
 
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(`<html><body><h3>${message}</h3></body></html>`);
+    res.end(`<html><body><h3 style="color: blue;">${message}</h3></body></html>`);
   }
 
   start() {
